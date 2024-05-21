@@ -25,8 +25,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 import java.util.prefs.Preferences;
 import javafx.application.Platform;
 /**
@@ -44,6 +46,8 @@ public class WebServerUI extends Application {
     private Button startButton;
     private Button stopButton;
     private Timeline logUpdater;
+    private Set<String> displayedLogs = new HashSet<>();
+
 
     public static void main(String[] args) {
         launch(args);
@@ -90,7 +94,8 @@ public class WebServerUI extends Application {
 
         logArea = new TextArea();
         logArea.setEditable(false);
-        logArea.setPrefHeight(150);
+        logArea.setPrefHeight(550);
+        logArea.setPrefWidth(650);
         grid.add(logArea, 0, 4, 3, 1);
 
         startButton = new Button("Start");
@@ -110,7 +115,7 @@ public class WebServerUI extends Application {
         borderPane.setBottom(buttonBox);
         borderPane.setCenter(grid);
 
-        Scene scene = new Scene(borderPane, 450, 350);
+        Scene scene = new Scene(borderPane, 650, 550);
         primaryStage.setScene(scene);
         primaryStage.setResizable(false);
         primaryStage.show();
@@ -166,7 +171,7 @@ public class WebServerUI extends Application {
     private void stopWebServer() {
         if (webServer != null && webServer.isAlive()) {
             webServer.stopServer();
-            appendToLog(String.format("[%s] Server stopped\n", new Date()));
+            appendToLog(String.format("[%s] Web Server stopped\n", new Date()));
             stopButton.setDisable(true);
             startButton.setDisable(false);
 
@@ -187,12 +192,17 @@ public class WebServerUI extends Application {
         }
     }
 
+
     private void readLogs() {
         if (webServer != null) {
             List<String> logs = webServer.loadAccessLogs();
             if (!logs.isEmpty()) {
                 for (String log : logs) {
-                    appendToLog(log + "\n");
+                    // Periksa apakah log telah ditampilkan sebelumnya
+                    if (!displayedLogs.contains(log)) {
+                        appendToLog(log + "\n");
+                        displayedLogs.add(log); // Tambahkan log ke set displayedLogs
+                    }
                 }
             }
         }
