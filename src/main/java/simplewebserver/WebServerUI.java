@@ -94,7 +94,7 @@ public class WebServerUI extends Application {
 
         logArea = new TextArea();
         logArea.setEditable(false);
-        logArea.setPrefHeight(550);
+        logArea.setPrefHeight(450);
         logArea.setPrefWidth(650);
         grid.add(logArea, 0, 4, 3, 1);
 
@@ -115,7 +115,7 @@ public class WebServerUI extends Application {
         borderPane.setBottom(buttonBox);
         borderPane.setCenter(grid);
 
-        Scene scene = new Scene(borderPane, 650, 550);
+        Scene scene = new Scene(borderPane, 650, 450);
         primaryStage.setScene(scene);
         primaryStage.setResizable(false);
         primaryStage.show();
@@ -171,7 +171,7 @@ public class WebServerUI extends Application {
     private void stopWebServer() {
         if (webServer != null && webServer.isAlive()) {
             webServer.stopServer();
-            appendToLog(String.format("[%s] Web Server stopped\n", new Date()));
+            appendToLog(String.format("[%s] Server stopped\n", new Date()));
             stopButton.setDisable(true);
             startButton.setDisable(false);
 

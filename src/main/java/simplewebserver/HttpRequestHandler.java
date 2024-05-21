@@ -159,34 +159,25 @@ public class HttpRequestHandler extends Thread {
         // Mendapatkan daftar file dalam direktori yang diberikan
         File[] files = directory.listFiles();
         // Membangun respons HTML untuk menampilkan daftar file
-        StringBuilder responseBuilder = new StringBuilder("<html><body>");
+        StringBuilder responseBuilder = new StringBuilder("<html><body><h1>Directory Listing</h1>");
 
         // Menambahkan tombol "Back" jika tidak berada di direktori root
         if (parentDirectory != null) {
-            responseBuilder.append("<button style='padding: 6px 24px;font-size: 1rem;' onclick=\"goBack()\">Back</button><br>");
+            responseBuilder.append("<button onclick=\"goBack()\">Back</button><br>");
         }
-        
-        responseBuilder.append("<div style='display: flex;width: 100%;flex-direction: column;align-items: center;'>");
-        responseBuilder.append("<h1 style='font-family: Helvetica, sans-serif;'>Directory</h1>");
-        responseBuilder.append("<table style='font-family: Helvetica, sans-serif;' cellpadding='6' cellspacing='0' border='1'>");
-        responseBuilder.append("<tr><th>Name</th><th>Type</th><th>Size <byte></th></tr>");
 
         // Membuat daftar file yang ada dalam direktori dalam bentuk list dan hyperlink
+        responseBuilder.append("<ul>");
         if (files != null) {
             for (File file : files) {
                 String fileName = file.getName();
-                responseBuilder.append("<tr>");
                 // Memberi hyperlink pada setiap file dalam daftar
-                responseBuilder.append("<td><a href=\"").append(fileName).append("\">").append(fileName).append("</a></td>");
-                responseBuilder.append("<td>").append(file.isDirectory() ? "Directory" : "File").append("</td>");
-                responseBuilder.append("<td>").append(file.isDirectory() ? "-" : file.length()).append("</td>");
-                responseBuilder.append("</tr>");
+                responseBuilder.append("<li><a href=\"").append(fileName).append("\">").append(fileName).append("</a></li>");
             }
         }
 
         // Menambahkan skrip untuk tombol back
-        responseBuilder.append("</table>");
-        responseBuilder.append("</div>");
+        responseBuilder.append("</ul>");
         responseBuilder.append("<script>");
         responseBuilder.append("function goBack() { window.history.back(); }"); // Skrip JavaScript untuk kembali
         responseBuilder.append("</script>");
