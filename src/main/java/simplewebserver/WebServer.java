@@ -2,15 +2,15 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package simplewebserver;
+package simplewebserver; // Deklarasi paket
 
-import java.io.IOException;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.io.IOException; // Import kelas IOException
+import java.net.ServerSocket; // Import kelas ServerSocket
+import java.net.Socket; // Import kelas Socket
+import java.util.List; // Import kelas List
+import java.util.concurrent.ExecutorService; // Import kelas ExecutorService
+import java.util.concurrent.Executors; // Import kelas Executors
+import java.util.concurrent.atomic.AtomicBoolean; // Import kelas AtomicBoolean
 
 /**
  *
@@ -18,65 +18,65 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 
 public class WebServer {
-    private static String webRoot = "./webroot";
-    private int port;
-    private String logsPath;
-    private ExecutorService threadPool;
-    private AtomicBoolean running;
-    private ServerSocket serverSocket;
+    private static String webRoot = "./webroot"; // Deklarasi dan inisialisasi variabel static webRoot
+    private int port; // Deklarasi variabel instance untuk port
+    private String logsPath; // Deklarasi variabel instance untuk logsPath
+    private ExecutorService threadPool; // Deklarasi variabel instance untuk thread pool
+    private AtomicBoolean running; // Deklarasi variabel instance untuk status running
+    private ServerSocket serverSocket; // Deklarasi variabel instance untuk serverSocket
 
     public WebServer(String webRoot, String logsPath, int port) {
-        WebServer.webRoot = webRoot;
-        this.logsPath = logsPath;
-        this.port = port;
-        this.threadPool = Executors.newCachedThreadPool();
-        this.running = new AtomicBoolean(false);
+        WebServer.webRoot = webRoot; // Mengatur nilai static webRoot dengan parameter
+        this.logsPath = logsPath; // Mengatur nilai logsPath dengan parameter
+        this.port = port; // Mengatur nilai port dengan parameter
+        this.threadPool = Executors.newCachedThreadPool(); // Inisialisasi thread pool
+        this.running = new AtomicBoolean(false); // Inisialisasi status running dengan nilai false
     }
 
     public void start() {
-        running.set(true);
+        running.set(true); // Mengatur status running menjadi true
         try {
-            serverSocket = new ServerSocket(port);
-            System.out.println("Web server started on port " + port);
-            while (running.get()) {
-                Socket clientSocket = serverSocket.accept();
-                threadPool.execute(new HttpRequestHandler(clientSocket, logsPath, this));
+            serverSocket = new ServerSocket(port); // Membuat serverSocket pada port yang ditentukan
+            System.out.println("Web server started on port " + port); // Mencetak pesan bahwa server telah dimulai
+            while (running.get()) { // Loop utama server
+                Socket clientSocket = serverSocket.accept(); // Menerima koneksi dari client
+                threadPool.execute(new HttpRequestHandler(clientSocket, logsPath, this)); // Menangani request dari client menggunakan thread pool
             }
         } catch (IOException e) {
-            if (running.get()) {
-                e.printStackTrace();
+            if (running.get()) { // Jika server masih berjalan
+                e.printStackTrace(); // Cetak stack trace jika terjadi kesalahan
             }
         } finally {
-            stopServer();
+            stopServer(); // Memastikan server dihentikan dengan memanggil stopServer()
         }
     }
 
     public void stopServer() {
-        running.set(false);
-        if (serverSocket != null && !serverSocket.isClosed()) {
+        running.set(false); // Mengatur status running menjadi false
+        if (serverSocket != null && !serverSocket.isClosed()) { // Jika serverSocket tidak null dan belum ditutup
             try {
-                serverSocket.close();
+                serverSocket.close(); // Menutup serverSocket
             } catch (IOException e) {
-                e.printStackTrace();
+                e.printStackTrace(); // Cetak stack trace jika terjadi kesalahan
             }
         }
-        threadPool.shutdown();
-        System.out.println("Web server stopped");
+        threadPool.shutdown(); // Menghentikan thread pool
+        System.out.println("Web server stopped"); // Mencetak pesan bahwa server telah dihentikan
     }
 
     public boolean isAlive() {
-        return running.get();
+        return running.get(); // Mengembalikan status running
     }
 
     public void setLogsPath(String logsPath) {
-        this.logsPath = logsPath;
+        this.logsPath = logsPath; // Mengatur nilai logsPath
     }
 
     public List<String> loadAccessLogs() {
-        return new HttpRequestHandler(null, logsPath, this).loadAccessLogs();
+        return new HttpRequestHandler(null, logsPath, this).loadAccessLogs(); // Memuat log akses menggunakan HttpRequestHandler
     }
 
     public static String getWebRoot() {
-        return webRoot;
+        return webRoot; // Mengembalikan nilai webRoot
     }
 }

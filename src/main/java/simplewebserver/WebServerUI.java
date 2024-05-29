@@ -73,7 +73,7 @@ public class WebServerUI extends Application {
         grid.setVgap(10);
 
         Label portLabel = new Label("Port:");
-        portField = new TextField(preferences.get("port", "8000"));
+        portField = new TextField(preferences.get("port", "8000")); //untuk mengambil nilai port 8000 sebagai nilai default jika belum pernah diisi inputan
         portField.setPrefWidth(200);
         grid.add(portLabel, 0, 1);
         grid.add(portField, 1, 1);
@@ -148,7 +148,9 @@ public class WebServerUI extends Application {
 
         preferences.put("filePath", filePath);
         preferences.put("logsPath", logsPath);
-        preferences.put("port", String.valueOf(port));
+        preferences.put("port", String.valueOf(port)); 
+        //untuk menampilkan nilai port terakhir yang tersimpan kemudian dijalankan ketika server dimulai.
+        
 
         if (webServer == null || !webServer.isAlive()) {
             if (!logArea.getText().isEmpty()) {

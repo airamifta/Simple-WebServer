@@ -1,5 +1,3 @@
-// RAMIFTA CODES
-
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
@@ -20,11 +18,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.net.InetAddress;
 
 /**
  *
@@ -35,7 +28,6 @@ public class HttpRequestHandler extends Thread {
     private Socket socket; // socket untuk koneksi ke klien
     private String logsPath; // path ke direktori logs yang disetel sesuai dengan GUI nya
     private WebServer webServer;
-    private InetAddress inetAddress;
 
     // Konstruktor untuk HttpRequestHandler
     public HttpRequestHandler(Socket socket, String logsPath, WebServer server) {
@@ -68,7 +60,6 @@ public class HttpRequestHandler extends Thread {
                 }
                 // Mencatat di log-nya
                 logAccess(requestURL, socket.getInetAddress().getHostAddress(), requestURL);
-            
             }
 
         } catch (IOException e) {
@@ -159,25 +150,34 @@ public class HttpRequestHandler extends Thread {
         // Mendapatkan daftar file dalam direktori yang diberikan
         File[] files = directory.listFiles();
         // Membangun respons HTML untuk menampilkan daftar file
-        StringBuilder responseBuilder = new StringBuilder("<html><body><h1>Directory Listing</h1>");
+        StringBuilder responseBuilder = new StringBuilder("<html><body>");
 
         // Menambahkan tombol "Back" jika tidak berada di direktori root
         if (parentDirectory != null) {
-            responseBuilder.append("<button onclick=\"goBack()\">Back</button><br>");
+            responseBuilder.append("<button style='padding: 6px 24px;font-size: 1rem;' onclick=\"goBack()\">Back</button><br>");
         }
+        
+        responseBuilder.append("<div style='display: flex;width: 100%;flex-direction: column;align-items: center;'>");
+        responseBuilder.append("<h1 style='font-family: Helvetica, sans-serif;'>Directory</h1>");
+        responseBuilder.append("<table style='font-family: Helvetica, sans-serif;' cellpadding='6' cellspacing='0' border='1'>");
+        responseBuilder.append("<tr><th>Name</th><th>Type</th><th>Size <byte></th></tr>");
 
         // Membuat daftar file yang ada dalam direktori dalam bentuk list dan hyperlink
-        responseBuilder.append("<ul>");
         if (files != null) {
             for (File file : files) {
                 String fileName = file.getName();
+                responseBuilder.append("<tr>");
                 // Memberi hyperlink pada setiap file dalam daftar
-                responseBuilder.append("<li><a href=\"").append(fileName).append("\">").append(fileName).append("</a></li>");
+                responseBuilder.append("<td><a href=\"").append(fileName).append("\">").append(fileName).append("</a></td>");
+                responseBuilder.append("<td>").append(file.isDirectory() ? "Directory" : "File").append("</td>");
+                responseBuilder.append("<td>").append(file.isDirectory() ? "-" : file.length()).append("</td>");
+                responseBuilder.append("</tr>");
             }
         }
 
         // Menambahkan skrip untuk tombol back
-        responseBuilder.append("</ul>");
+        responseBuilder.append("</table>");
+        responseBuilder.append("</div>");
         responseBuilder.append("<script>");
         responseBuilder.append("function goBack() { window.history.back(); }"); // Skrip JavaScript untuk kembali
         responseBuilder.append("</script>");
@@ -188,7 +188,6 @@ public class HttpRequestHandler extends Thread {
                 "\r\nContent-Type: text/html\r\n\r\n" + responseBuilder.toString();
         out.writeBytes(response);
     }
-
 
     // Mengambil direktori induk dari URL permintaan
     private String getParentDirectory(String requestURL) {
@@ -248,5 +247,4 @@ public class HttpRequestHandler extends Thread {
 
         return logs;
     }
-    
 }
